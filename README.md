@@ -15,3 +15,11 @@ Run `python play.py` to test the policy.
 Run `python arm.py` to run the task.
 
 XML Models for possible use are in `./models`
+
+
+
+https://github.com/osudrl/apex
+
+https://github.com/osudrl/cassie-mujoco-sim
+
+https://github.com/ZhaomingXie/cassie_rl_env
