@@ -1,0 +1,107 @@
+<!--
+
+MODEL: Univewrsal Robots UR5 + Robotiq S Model 3 Finger Gripper
+AUTHOR: Andrea Franceschetti @IASLAB Research Group
+UNIVERSITY: University of Padua
+DEPARTMENT: Departement of Information Engineering DEI
+Control Engineering / Automation Engineering
+
+-->
+
+
+<!--Link  MuJoCo modeling: http://www.mujoco.org/book/modeling.html-->
+
+<mujoco model="ur5gripper">
+    <compiler angle="radian"
+              inertiafromgeom="true"
+              texturedir="textures/"
+              meshdir="mesh/visual/"/>
+    <option timestep="2e-3"
+            iterations="100"
+            tolerance="1e-10"
+            impratio="10"/>
+            <!-- cone="elliptic" -->
+            <!-- noslip_iterations="10"/> -->
+    <size njmax="10000" nconmax="1500" nstack="3000000"/>
+
+    <default>
+        <site rgba="0.8 0.6 0.7 0.3" type="ellipsoid" group="3"/>
+        <geom contype='1' conaffinity='1' condim='6'  margin="1e-3" solref=".01 1" solimp=".99 .99 .01" />
+        <joint armature="0.01" damping=".1"/>
+        <default class="UR5">
+            <joint damping='65'/>
+        </default>
+        <default class="UR5e">
+            <joint damping='45'/>
+        </default>
+        <default class="GRIPPER">
+            <joint damping='5'/>
+        </default>
+    </default>
+
+    <visual>
+        <map fogstart="3" fogend="5" znear="0.05"/>
+        <quality shadowsize="2048"/>
+        <scale framelength="0.1"
+               framewidth="0.005"
+               contactwidth="0.1"
+               contactheight="0.005"
+               forcewidth="0.01"
+               />
+    </visual>
+
+    <!--Assets-->
+    <asset>
+
+        <!--Textures-->
+        <texture name="wood"        type="cube"     file="wood2.png"/>
+        <texture name="metal"        type="cube"     file="metal2.png"/>
+        <!--Materials-->
+        <material name="bench_mat"      texture="metal"   shininess="0.1" specular="0.5" reflectance="0.2"/>
+        <material name="tablecube"      texture="wood" rgba=".8 .8 .8 1"/>
+    </asset>
+
+    <!--MODEL DESCRIPTION-->
+    <worldbody>
+        <light pos='0 0 5' dir='0 0 -1' diffuse='0.9 0.9 0.9'/>
+        <!--Floor Property-->
+        <geom name='floor'  pos='0 0 0' size='2.5 2.5 0.1'  type='plane' />
+
+        <body name="pick_box" pos="0 -0.6 0.0" euler="0 0 1.57">
+            <geom size=".2 .28 .03" pos ="0 0 0.86" type="box" material="bench_mat"/>
+            <geom size=".03 .27 .45" pos ="0.23 0.0 0.45" type="box" material="bench_mat"/>
+            <geom size=".03 .27 .45" pos ="-0.23 0.0 0.45" type="box" material="bench_mat"/>
+            <geom size=".26 .03 .45" pos ="0.0 0.3 0.45" type="box" material="bench_mat"/>
+            <geom size=".26 .03 .45" pos ="0.0 -0.3 0.45" type="box" material="bench_mat"/>
+            <inertial pos="0 0 0" mass="1000" diaginertia="0 0 0" />
+        </body> 
+
+        <body name="drop_box" pos="0.6 0.1 0.0">
+            <geom size=".2 .3 .03" pos ="0 0 0.615" type="box" material="bench_mat"/>
+            <geom size=".03 .3 .4" pos ="0.23 0.0 0.4" type="box" material="bench_mat"/>
+            <geom size=".03 .3 .4" pos ="-0.23 0.0 0.4" type="box" material="bench_mat"/>
+            <geom size=".26 .03 .4" pos ="0.0 0.33 0.4" type="box" material="bench_mat"/>
+            <geom size=".26 .03 .4" pos ="0.0 -0.33 0.4" type="box" material="bench_mat"/>
+            <inertial pos="0 0 0" mass="1000" diaginertia="0 0 0" />
+        </body>
+
+
+        <body name="flat_box" pos="-0.1 0 0.435">
+            <geom size=".29 .19 .03" pos ="0 0 0.4" type="box" material="bench_mat"/>
+            <geom size=".29 .19 .03" pos ="0 0 -0.2" type="box" material="bench_mat"/>
+            <geom size=".04 .04 .435" pos =".26 .16 0" type="box" material="bench_mat"/>
+            <geom size=".04 .04 .435" pos ="-.26 .16 0" type="box" material="bench_mat"/>
+            <geom size=".04 .04 .435" pos =".26 -.16 0" type="box" material="bench_mat"/>
+            <geom size=".04 .04 .435" pos ="-.26 -.16 0" type="box" material="bench_mat"/>
+            <inertial pos="0 0 0" mass="1000" diaginertia="0 0 0" />
+    </body>
+
+    <body name="box_1" pos=".0 -1.6 0.95">
+        <joint armature="0" axis="1 0 0" damping="0" limited="true" name="box_1_x" pos="0 0 0" range="-5. 5." stiffness="0" type="slide"/>
+        <joint armature="0" axis="0 1 0" damping="0" limited="true" name="box_1_y" pos="0 0 0" range="-5. 5." stiffness="0" type="slide"/>
+        <joint armature="0" axis="0 0 1" damping="0" limited="true" name="box_1_z" pos="0 0 0" range="-2. 2." stiffness="0" type="slide"/>
+        <joint armature="0" damping="0" name="box_1_rot" pos="0 0 0" stiffness="0" type="ball"/>
+        <geom name="box_1" pos="0 0 0" material="tablecube" size="0.02 0.02 0.02" type="box"/>
+    </body>
+    </worldbody>
+</mujoco>

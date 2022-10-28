@@ -1,0 +1,529 @@
+<!-- Cassie simulation model developed by the Dynamic Robotics Laboratory -->
+<mujoco model='cassie'>
+  <compiler inertiafromgeom='auto' angle='degree' eulerseq='zyx' meshdir='cassie-stl-meshes' texturedir="textures/"/>
+  <size nuser_actuator='1' nuser_sensor='1' nuser_geom='1'/>
+  <option timestep='0.0005' iterations='50' solver='PGS' gravity='0 0 -9.81'/>
+  <!-- <option timestep='0.0005' iterations='50' solver='PGS' gravity='0 0 0'/> -->
+  <!-- Timestep is set to 0.0005 because our controller runs at 2 kHz -->
+  <!-- Larger values still have stable dynamics -->
+
+  <visual>
+    <quality shadowsize='4096'/>
+    <map znear='0.05'/>
+  </visual>
+
+  <default>
+    <joint limited='true'/>
+    <motor ctrllimited='true'/>
+    <geom contype='0' conaffinity='0' condim='1' solref='0.005 1'/>
+    <equality solref='0.005 1'/>
+    <default class='cassie'>
+      <geom material='cassie'/>
+    </default>
+    <default class='collision'>
+      <!-- User parameter for geoms is used to identify collision types -->
+      <geom material='collision' contype='1' user='2'/>
+      <default class='collision-left'>
+        <geom contype='2' conaffinity='4'/>
+      </default>
+      <default class='collision-right'>
+        <geom contype='4' conaffinity='2'/>
+      </default>
+    </default>
+    <default class='obstacle'>
+      <geom material='obstacle' condim='3' contype='8' conaffinity='15' user='1'/>
+    </default>
+    		<default class="wall">
+			<geom  contype='8' conaffinity='15' />
+		</default>
+		<default class="frame">
+			<geom rgba="0.77 0.74 0.75 1.0" type="mesh" contype='8' conaffinity='15' />
+		</default>
+		<default class="door">
+			<geom rgba="0.5 0.74 0.59 1.0" type="mesh" contype='8' conaffinity='15' />
+		</default>
+		<default class="door_knob">
+			<geom condim="4" rgba="0.96 0.65 0.5 1.0" type="mesh" contype='8' conaffinity='15' />
+		</default>
+
+    <default class="robotiq2f85">
+        <joint damping=".1" pos="0 0 0" axis="1 0 0" limited="true" />
+        <default class="robotiq_viz">
+            <geom rgba=".1 .1 .1 1" type="mesh"  group="1"/>
+        </default>
+    </default>
+  </default>
+
+  <asset>
+    <texture type='skybox' builtin='gradient' width='128' height='128' rgb1='0.4 0.6 0.8' rgb2='0 0 0'/>
+    <texture name='plane' type='2d' builtin='checker' rgb1='0.2 0.2 0.2' rgb2='0.3 0.3 0.3' width='512' height='512'/>
+    <material name='plane' reflectance='0.0' texture='plane' texrepeat='1 1' texuniform='true'/>
+    <material name='cassie'    rgba='0.9 0.5 0.1 1'/>
+    <material name='collision' rgba='0.1 0.5 0.9 0'/>
+    <material name='obstacle'  rgba='0.2 0.6 0.2 1'/>
+    <mesh name='cassie-pelvis' file='pelvis.stl'/>
+    <mesh name='left-hip-roll'     file='hip-roll.stl'/>
+    <mesh name='left-hip-yaw'      file='hip-yaw.stl'/>
+    <mesh name='left-hip-pitch'    file='hip-pitch.stl'/>
+    <mesh name='left-achilles-rod' file='achilles-rod.stl'/>
+    <mesh name='left-knee'         file='knee.stl'/>
+    <mesh name='left-knee-spring'  file='knee-spring.stl'/>
+    <mesh name='left-shin'         file='shin.stl'/>
+    <mesh name='left-tarsus'       file='tarsus.stl'/>
+    <mesh name='left-heel-spring'  file='heel-spring.stl'/>
+    <mesh name='left-foot-crank'   file='foot-crank.stl'/>
+    <mesh name='left-plantar-rod'  file='plantar-rod.stl'/>
+    <mesh name='left-foot'         file='foot.stl'/>
+    <mesh name='right-hip-roll'     scale='1 -1 1' file='hip-roll.stl'/>
+    <mesh name='right-hip-yaw'      scale='1 -1 1' file='hip-yaw.stl'/>
+    <mesh name='right-hip-pitch'    scale='1 1 -1' file='hip-pitch.stl'/>
+    <mesh name='right-achilles-rod' scale='1 1 -1' file='achilles-rod.stl'/>
+    <mesh name='right-knee'         scale='1 1 -1' file='knee.stl'/>
+    <mesh name='right-knee-spring'  scale='1 1 -1' file='knee-spring.stl'/>
+    <mesh name='right-shin'         scale='1 1 -1' file='shin.stl'/>
+    <mesh name='right-tarsus'       scale='1 1 -1' file='tarsus.stl'/>
+    <mesh name='right-heel-spring'  scale='1 1 -1' file='heel-spring.stl'/>
+    <mesh name='right-foot-crank'   scale='1 1 -1' file='foot-crank.stl'/>
+    <mesh name='right-plantar-rod'  scale='1 1 -1' file='plantar-rod.stl'/>
+    <mesh name='right-foot'         scale='1 1 -1' file='foot.stl'/>
+
+    <!-- assets for kinove-gen3 -->
+    <mesh name="base_link" file="base_link.stl" />
+    <mesh name="shoulder_link" file="shoulder_link.stl" />
+    <mesh name="bicep_link" file="bicep_link.stl" />
+    <mesh name="forearm_link" file="forearm_link.stl" />
+    <mesh name="spherical_wrist_1_link" file="spherical_wrist_1_link.stl" />
+    <mesh name="spherical_wrist_2_link" file="spherical_wrist_2_link.stl" />
+    <mesh name="bracelet_no_vision_link" file="bracelet_no_vision_link.stl" />
+
+    <!-- assets for robotiq -->
+    <mesh name="robotiq-2f-base" file="./robotiq/robotiq-2f-base.stl" scale="0.001 0.001 0.001" />
+    <mesh name="robotiq-2f-driver" file="./robotiq/robotiq-2f-driver.stl" scale="0.001 0.001 0.001" />
+    <mesh name="robotiq-2f-coupler" file="./robotiq/robotiq-2f-coupler.stl" scale="0.001 0.001 0.001" />
+    <mesh name="robotiq-2f-follower" file="./robotiq/robotiq-2f-follower.stl" scale="0.001 0.001 0.001" />
+    <mesh name="robotiq-2f-pad" file="./robotiq/robotiq-2f-pad.stl" scale="0.001 0.001 0.001" />
+    <mesh name="robotiq-2f-spring_link" file="./robotiq/robotiq-2f-spring_link.stl" scale="0.001 0.001 0.001" />
+
+    <mesh file="kinova_robotiq_coupler.stl" />
+    <mesh file="robotiq_85_base_link.stl" />
+    <mesh file="robotiq_85_finger_link.stl" />
+    <mesh file="robotiq_85_finger_tip_link.stl" />
+    <mesh file="robotiq_85_inner_knuckle_link.stl" />
+    <mesh file="robotiq_85_knuckle_link.stl" />
+    <material name="RobMat" specular="0.9" shininess="0.5" reflectance="0" rgba="0.7 0.7 0.7 1" emission="0.1" />
+    <material name="GriMat" specular="0.9" shininess="0.5" reflectance="0" rgba="0.1 0.1 0.1 1" emission="0.1" />
+    <material name="BasketMat" specular="0" shininess="0" reflectance="0" rgba="0.26 0.16 0.16796875 1" emission="0" />
+    <material name="Light" specular="0" shininess="0.6" reflectance="0.9" rgba="0.5 0.5 1 1" emission="0.7" />
+    
+    <!-- assets for boxes -->
+        <texture name="wood"        type="cube"     file="wood2.png"/>
+        <texture name="metal"        type="cube"     file="metal2.png"/>
+        <material name="bench_mat"      texture="metal"   shininess="0.1" specular="0.5" reflectance="0.2"/>
+        <material name="tablecube"      texture="wood" rgba=".8 .8 .8 1"/>
+  </asset>
+
+  <worldbody>
+    <geom name='floor' pos='0.001 0 0' size='100 10 .125' type='plane' material='plane' condim='3' conaffinity='15'/>
+
+    <!-- <light mode='trackcom' pos='0 0 5' dir='0 0 -1'/> -->
+    <light directional='true' pos='0 0 3' dir='0 0 -1' diffuse='0.5 0.5 0.5' specular='0 0 0'/>
+    <light pos='5 0 3' dir='0 0 -1' diffuse='0.9 0.9 0.9'/>
+    <light  mode="targetbody" target="ee" directional="true" pos="3 0 13" diffuse='0.9 0.9 0.9'/>
+
+    <body name='cassie-pelvis' pos='0 0 1.01' childclass='cassie'>
+      <camera name='track' pos='0 -3 1' zaxis='0 -1 0.5' mode='track'/>
+      <!--camera name='track' pos='-3 0 0' xyaxes='0 -1 0 0 0 1' mode='track'/-->
+      <inertial pos='0.05066 0.000346 0.02841' mass='10.33' fullinertia='0.085821 0.049222 0.08626 1.276e-05 -0.00016022 -0.000414'/>
+      <joint type='slide' axis='1 0 0' limited='false'/>
+      <joint type='slide' axis='0 1 0' limited='false'/>
+      <joint type='slide' axis='0 0 1' limited='false' ref='1.01'/>
+      <joint type='ball' limited='false'/>
+      <geom type='mesh' mesh='cassie-pelvis'/>
+      <geom type='sphere' size='0.15' pos='0.02 0 0.02' class='collision'/>
+      <site name='imu' size='0.01' pos='0.03155 0 -0.07996'/>
+
+      <site name='range1' type='cylinder' size='0.005 0.1 0.005' rgba='0.5 0.5 0.5 1' fromto='0 0 -0.1 0.02452 0 -0.10488'/>
+      <site name='range2' type='cylinder' size='0.005 0.1 0.005' rgba='0.5 0.5 0.5 1' fromto='0 0 -0.1 0.02031 0 -0.10957'/>
+      <site name='range3' type='cylinder' size='0.005 0.1 0.005' rgba='0.5 0.5 0.5 1' fromto='0 0 -0.1 0.02079 0 -0.11389'/>
+      <site name='range4' type='cylinder' size='0.005 0.1 0.005' rgba='0.5 0.5 0.5 1' fromto='0 0 -0.1 0.01768 0 -0.11768'/>
+      <site name='range5' type='cylinder' size='0.005 0.1 0.005' rgba='0.5 0.5 0.5 1' fromto='0 0 -0.1 0.01389 0 -0.12079'/>
+      <site name='range6' type='cylinder' size='0.005 0.1 0.005' rgba='0.5 0.5 0.5 1' fromto='0 0 -0.1 0.00957 0 -0.12310'/>
+
+      <body name='left-hip-roll' pos='0.021 0.135 0' xyaxes='0 0 -1 0 1 0'>
+        <inertial pos='-0.01793 0.0001 -0.04428' mass='1.82' fullinertia='0.003431 0.003793 0.002135 -6.65e-07 -0.00084 3.99e-06'/>
+        <joint name='left-hip-roll' type='hinge' range='-15 22.5' damping='1' armature='0.038125'/>
+        <geom type='mesh' mesh='left-hip-roll'/>
+        <body name='left-hip-yaw' pos='0 0 -0.07' xyaxes='0 0 1 0 1 0'>
+          <inertial pos='0 -1e-05 -0.034277' mass='1.171' fullinertia='0.002443 0.002803 0.000842 -4e-08 2.462e-07 -2.71e-08'/>
+          <joint name='left-hip-yaw' type='hinge' range='-22.5 22.5' damping='1' armature='0.038125'/>
+          <geom type='mesh' mesh='left-hip-yaw'/>
+          <body name='left-hip-pitch' pos='0 0 -0.09' xyaxes='0 0 -1 1 0 0'>
+            <inertial pos='0.05946 5e-05 -0.03581' mass='5.52' fullinertia='0.010898 0.029714 0.030257 -0.0002669 -5.721e-05 9.17e-06'/>
+            <joint name='left-hip-pitch' type='hinge' range='-50 80' damping='1' armature='0.09344'/>
+            <geom type='mesh' mesh='left-hip-pitch'/>
+            <geom type='capsule' size='0.08' fromto='0 0 -0.04 0.12 0 -0.0355' class='collision'/>
+            <body name='left-achilles-rod' pos='0 0 0.045' xyaxes='0.7922 -0.60599 -0.072096 0.60349 0.79547 -0.054922'>
+              <inertial pos='0.24719 0 0' mass='0.1567' fullinertia='3.754e-06 0.004487 0.004488 -3.74e-08 -1.61e-08 0'/>
+              <joint name='left-achilles-rod' type='ball' limited='false' damping='0.01'/>
+              <geom type='mesh' mesh='left-achilles-rod'/>
+            </body>
+            <body name='left-knee' pos='0.12 0 0.0045' xyaxes='0.70711 -0.70711 0 0.70711 0.70711 0'>
+              <inertial pos='0.023 0.03207 -0.002181' mass='0.7578' fullinertia='0.001376 0.0010335 0.0021637 -0.00039744 -4.085e-05 -5.374e-05'/>
+              <joint name='left-knee' type='hinge' ref='-45' range='-164 -37' damping='1' armature='0.09344'/>
+              <geom type='mesh' mesh='left-knee'/>
+              <body name='left-knee-spring' pos='0.06068 0.08241 0'>
+                <inertial pos='0.0836 0.0034 0' mass='0.186' fullinertia='5.215e-05 0.00041205 0.0003669 6.87e-06 0 0'/>
+                <geom type='mesh' mesh='left-knee-spring'/>
+              </body>
+              <body name='left-shin' pos='0.06068 0.04741 0'>
+                <inertial pos='0.18338 0.001169 0.0002123' mass='0.577' fullinertia='0.00035939 0.014728 0.014707 -0.00020981 2.266e-05 -1.2e-07'/>
+                <joint name='left-shin' type='hinge' range='-20 20' stiffness='1500' damping='0.1'/>
+                <geom type='mesh' mesh='left-shin'/>
+                <geom type='capsule' size='0.04' fromto='0 0 0 0.43476 0.02 0' class='collision-left'/>
+                <body name='left-tarsus' pos='0.43476 0.02 0' xyaxes='0.52992 0.84805 0 -0.84805 0.52992 0'>
+                  <inertial pos='0.11046 -0.03058 -0.00131' mass='0.782' fullinertia='0.00039238 0.013595 0.013674 0.00023651 -4.987e-05 -4.82e-06'/>
+                  <joint name='left-tarsus' type='hinge' ref='58' range='50 170' damping='0.1'/>
+                  <geom type='mesh' mesh='left-tarsus'/>
+                  <geom type='capsule' size='0.04' fromto='-0.01269 -0.03059 0.00092 0.408 -0.04 0' class='collision-left'/>
+                  <body name='left-heel-spring' pos='-0.01269 -0.03059 0.00092' xyaxes='-0.91211 0.40829 0.036948 -0.40992 -0.90952 -0.068841'>
+                    <inertial pos='0.081 0.0022 0' mass='0.126' fullinertia='2.959e-05 0.00022231 0.0002007 7.15e-06 -6e-07 1e-07'/>
+                    <joint name='left-heel-spring' type='hinge' limited='false' stiffness='1250'/>
+                    <geom type='mesh' mesh='left-heel-spring'/>
+                  </body>
+                  <body name='left-foot-crank' pos='0.058 -0.034 0.02275'>
+                    <inertial pos='0.00493 2e-05 -0.00215' mass='0.1261' fullinertia='2.6941e-05 4.9621e-05 6.3362e-05 -2.1e-09 -3.9623e-06 -1.09e-08'/>
+                    <joint name='left-foot-crank' type='hinge' range='-140 -30' damping='1'/>
+                    <geom type='mesh' mesh='left-foot-crank'/>
+                    <body name='left-plantar-rod' pos='0.055 0 -0.00791'>
+                      <inertial pos='0.17792 0 0' mass='0.1186' fullinertia='2.779e-06 0.001774 0.001775 -2.34e-08 -8.1e-09 0'/>
+                      <joint name='left-plantar-rod' type='hinge' limited='false'/>
+                      <geom type='mesh' mesh='left-plantar-rod'/>
+                    </body>
+                  </body>
+                  <body name='left-foot' pos='0.408 -0.04 0'>
+                    <inertial pos='0.00474 0.02748 -0.00014' mass='0.1498' fullinertia='0.00017388 0.00016793 0.00033261 0.00011814 1.36e-06 -4e-07'/>
+                    <joint name='left-foot' type='hinge' range='-140 -30' damping='1' armature='0.01225'/>
+                    <geom type='mesh' mesh='left-foot'/>
+                    <geom type='capsule' size='0.02' fromto='-0.052821 0.092622 0 0.069746 -0.010224 0' class='collision-left'/>
+                    <site name="left-foot-pt" type="sphere" pos="0.01965 0.05375 0" size="0.005" rgba="0.7 0.2 0.1 1"/>
+                    <site name="left-toe" type="sphere" pos="-0.052821 0.092622 0" size="0.005" rgba="0.7 0.2 0.1 1"/>
+                    <site name="left-heel" type="sphere" pos="0.069746 -0.010224 0" size="0.005" rgba="0.7 0.2 0.1 1"/>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name='right-hip-roll' pos='0.021 -0.135 0' xyaxes='0 0 -1 0 1 0'>
+        <inertial pos='-0.01793 0.0001 -0.04428' mass='1.82' fullinertia='0.003431 0.003793 0.002135 6.65e-07 -0.00084 -3.99e-06'/>
+        <joint name='right-hip-roll' type='hinge' range='-22.5 15' damping='1' armature='0.038125'/>
+        <geom type='mesh' mesh='right-hip-roll'/>
+        <body name='right-hip-yaw' pos='0 0 -0.07' xyaxes='0 0 1 0 1 0'>
+          <inertial pos='0 1e-05 -0.034277' mass='1.171' fullinertia='0.002443 0.002803 0.000842 4e-08 2.462e-07 2.71e-08'/>
+          <joint name='right-hip-yaw' type='hinge' range='-22.5 22.5' damping='1' armature='0.038125'/>
+          <geom type='mesh' mesh='right-hip-yaw'/>
+          <body name='right-hip-pitch' pos='0 0 -0.09' xyaxes='0 0 -1 1 0 0'>
+            <inertial pos='0.05946 5e-05 0.03581' mass='5.52' fullinertia='0.010898 0.029714 0.030257 -0.0002669 5.721e-05 -9.17e-06'/>
+            <joint name='right-hip-pitch' type='hinge' range='-50 80' damping='1' armature='0.09344'/>
+            <geom type='mesh' mesh='right-hip-pitch'/>
+            <geom type='capsule' size='0.08' fromto='0 0 0.04 0.12 0 0.0355' class='collision'/>
+            <body name='right-achilles-rod' pos='0 0 -0.045' xyaxes='0.7922 -0.60599 0.072096 0.60349 0.79547 0.054922'>
+              <inertial pos='0.24719 0 0' mass='0.1567' fullinertia='3.754e-06 0.004487 0.004488 -3.74e-08 1.61e-08 0'/>
+              <joint name='right-achilles-rod' type='ball' limited='false' damping='0.01'/>
+              <geom type='mesh' mesh='right-achilles-rod'/>
+            </body>
+            <body name='right-knee' pos='0.12 0 -0.0045' xyaxes='0.70711 -0.70711 0 0.70711 0.70711 0'>
+              <inertial pos='0.023 0.03207 0.002181' mass='0.7578' fullinertia='0.001376 0.0010335 0.0021637 -0.00039744 4.085e-05 5.374e-05'/>
+              <joint name='right-knee' type='hinge' ref='-45' range='-164 -37' damping='1' armature='0.09344'/>
+              <geom type='mesh' mesh='right-knee'/>
+              <body name='right-knee-spring' pos='0.06068 0.08241 0'>
+                <inertial pos='0.0836 0.0034 0' mass='0.186' fullinertia='5.215e-05 0.00041205 0.0003669 6.87e-06 0 0'/>
+                <geom type='mesh' mesh='right-knee-spring'/>
+              </body>
+              <body name='right-shin' pos='0.06068 0.04741 0'>
+                <inertial pos='0.18338 0.001169 -0.0002123' mass='0.577' fullinertia='0.00035939 0.014728 0.014707 -0.00020981 -2.266e-05 1.2e-07'/>
+                <joint name='right-shin' type='hinge' range='-20 20' stiffness='1500' damping='0.1'/>
+                <geom type='mesh' mesh='right-shin'/>
+                <geom type='capsule' size='0.04' fromto='0 0 0 0.43476 0.02 0' class='collision-right'/>
+                <body name='right-tarsus' pos='0.43476 0.02 0' xyaxes='0.52992 0.84805 0 -0.84805 0.52992 0'>
+                  <inertial pos='0.11046 -0.03058 0.00131' mass='0.782' fullinertia='0.00039238 0.013595 0.013674 0.00023651 4.987e-05 4.82e-06'/>
+                  <joint name='right-tarsus' type='hinge' ref='58' range='50 170' damping='0.1'/>
+                  <geom type='mesh' mesh='right-tarsus'/>
+                  <geom type='capsule' size='0.04' fromto='-0.01269 -0.03059 -0.00092 0.408 -0.04 0' class='collision-right'/>
+                  <body name='right-heel-spring' pos='-0.01269 -0.03059 -0.00092' xyaxes='-0.91211 0.40829 -0.036948 -0.40992 -0.90952 0.068841'>
+                    <inertial pos='0.081 0.0022 0' mass='0.126' fullinertia='2.959e-05 0.00022231 0.0002007 7.15e-06 6e-07 -1e-07'/>
+                    <joint name='right-heel-spring' type='hinge' limited='false' stiffness='1250'/>
+                    <geom type='mesh' mesh='right-heel-spring'/>
+                  </body>
+                  <body name='right-foot-crank' pos='0.058 -0.034 -0.02275'>
+                    <inertial pos='0.00493 2e-05 0.00215' mass='0.1261' fullinertia='2.6941e-05 4.9621e-05 6.3362e-05 -2.1e-09 3.9623e-06 1.09e-08'/>
+                    <joint name='right-foot-crank' type='hinge' range='-140 -30' damping='1'/>
+                    <geom type='mesh' mesh='right-foot-crank'/>
+                    <body name='right-plantar-rod' pos='0.055 0 0.00791'>
+                      <inertial pos='0.17792 0 0' mass='0.1186' fullinertia='2.779e-06 0.001774 0.001775 -2.34e-08 8.1e-09 0'/>
+                      <joint name='right-plantar-rod' type='hinge' limited='false'/>
+                      <geom type='mesh' mesh='right-plantar-rod'/>
+                    </body>
+                  </body>
+                  <body name='right-foot' pos='0.408 -0.04 0'>
+                    <inertial pos='0.00474 0.02748 0.00014' mass='0.1498' fullinertia='0.00017388 0.00016793 0.00033261 0.00011814 -1.36e-06 4e-07'/>
+                    <joint name='right-foot' type='hinge' range='-140 -30' damping='1' armature='0.01225'/>
+                    <geom type='mesh' mesh='right-foot'/>
+                    <geom type='capsule' size='0.02' fromto='-0.052821 0.092622 0 0.069746 -0.010224 0' class='collision-right'/>
+                    <site name="right-foot-pt" type="sphere" pos="0.01965 0.05375 0" size="0.005" rgba="0.1 0.7 0.2 1"/>
+                    <site name="right-toe" type="sphere" pos="-0.052821 0.092622 0.0" size="0.005" rgba="0.1 0.7 0.2 1"/>
+                    <site name="right-heel" type="sphere" pos="0.069746 -0.010224 0" size="0.005" rgba="0.1 0.7 0.2 1"/>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="base_link" pos="0.12 0 0.2" euler="0 -90 0">
+        <site name='arm_base' size='0.001' pos='0 0 0.12'/>
+        <inertial pos="-0.000648 -0.000166 0.084487" quat="0.999294 0.00139618 -0.0118387 0.035636" mass="1.697" diaginertia="0.00462407 0.00449437 0.00207755" />
+        <geom type="mesh" contype="7" conaffinity="1" group="1" rgba="0.75294 0.75294 0.75294 1" mesh="base_link" />
+        <body name="shoulder_link" pos="0 0 0.15643" quat="-3.67321e-06 -1 0 0">
+          <inertial pos="-2.3e-05 -0.010364 -0.07336" quat="0.707051 0.0451246 -0.0453544 0.704263" mass="1.377" diaginertia="0.00488868 0.00457 0.00135132" />
+          <joint name="joint-a1" pos="0 0 0" axis="0 0 1" limited="true" range="-90 90" />
+          <geom type="mesh" contype="7" conaffinity="1" group="1" rgba="0.75294 0.75294 0.75294 1" mesh="shoulder_link" />
+          <body name="bicep_link" pos="0 0.005375 -0.12838" quat="0.707105 0.707108 0 0">
+            <inertial pos="3.5e-05 -0.208207 -0.01889" quat="0.499531 0.50049 -0.500566 0.499411" mass="1.262" diaginertia="0.0471882 0.046752 0.000849791" />
+            <joint name="joint-a2" pos="0 0 0" axis="0 0 1" limited="true" range="-138 138" />
+            <geom type="mesh" contype="7" conaffinity="1" group="1" rgba="0.75294 0.75294 0.75294 1" mesh="bicep_link" />
+            <body name="forearm_link" pos="0 -0.41 0" quat="-3.67321e-06 1 0 0">
+              <inertial pos="1.8e-05 0.076168 -0.01397" quat="0.513497 0.485985 -0.486188 0.513577" mass="0.93" diaginertia="0.00848774 0.008292 0.000604256" />
+              <joint name="joint-a3" pos="0 0 0" axis="0 0 1" limited="true" range="-152.4 152.4" />
+              <geom type="mesh" contype="7" conaffinity="1" group="1" rgba="0.75294 0.75294 0.75294 1" mesh="forearm_link" />
+              <body name="spherical_wrist_1_link" pos="0 0.20843 -0.006375" quat="0.707105 0.707108 0 0">
+                <inertial pos="-1e-06 0.008486 -0.062937" quat="0.704382 -0.062019 0.062019 0.704382" mass="0.678" diaginertia="0.00170753 0.001645 0.000347472" />
+                <joint name="joint-a4" pos="0 0 0" axis="0 0 1" limited="true" range="-180 180" />
+                <geom type="mesh" contype="7" conaffinity="1" group="1" rgba="0.75294 0.75294 0.75294 1" mesh="spherical_wrist_1_link" />
+                <body name="spherical_wrist_2_link" pos="0 -0.00017505 -0.10593" quat="0.707105 -0.707108 0 0">
+                  <inertial pos="-1e-06 0.046429 -0.008704" quat="0.5446 0.451011 -0.451011 0.5446" mass="0.678" diaginertia="0.00174437 0.001685 0.000351632" />
+                  <joint name="joint-a5" pos="0 0 0" axis="0 0 1" limited="true" range="-128 128" />
+                  <geom type="mesh" contype="7" conaffinity="1" group="1" rgba="0.75294 0.75294 0.75294 1" mesh="spherical_wrist_2_link" />
+                  <body name="bracelet_link" pos="0 0.10593 -0.00017505" quat="0.707105 0.707108 0 0">
+                    <inertial pos="-9.3e-05 0.000132 -0.022905" quat="-0.0368025 0.719402 -0.0444884 0.69219" mass="0.364" diaginertia="0.00024027 0.000222769 0.000213961" />
+                    <joint name="joint-a6" pos="0 0 0" axis="0 0 1" limited="true" range="-180 180" />
+                    <geom type="mesh" contype="7" conaffinity="1" group="1" rgba="0.75294 0.75294 0.75294 1" mesh="bracelet_no_vision_link" />
+                    <body name="ee" pos = "0 0 -0.0615"  quat="0 0 1 0" >
+                      <site name='imu_e' size='0.001' pos='0 0 0'/>
+                      <inertial pos="0 0.0823 0" quat="0.707107 -0.707107 0 0" mass="0" diaginertia="0 0 0" />
+                      <!--robotiq gripper starts here /-->
+                      <geom name="light_1" type="sphere" size="0.005" pos="0.035 0 0.0166" material="Light" />
+                      <geom name="light_2" type="sphere" size="0.005" pos="-0.035 0 0.0166"  material="Light"/>
+                      <!-- <geom name="kinova_robotiq_coupler_mesh" type="mesh" mesh="kinova_robotiq_coupler" pos="0 0 0.0466" material="GriMat" /> -->
+                      <!-- <geom name="robotiq_85_base_link_mesh" type="mesh" mesh="robotiq_85_base_link" pos="0 0 0.0016" quat="0.707107 0 -0.707107 0"  material="GriMat"/> -->
+
+                      <body name="robotiq_2f_85" pos="0 0 0" childclass="robotiq2f85">
+                        <geom class="robotiq_viz" mesh="robotiq-2f-base" />
+                        <body name="robotiq_2f_85_right_driver" pos="0 0.0306011 0.054904">
+                            <inertial pos="0 0.01575 0.05295" quat="0.738425 0.674335 0 0" mass="0.2" diaginertia="0.00043212 0.000431866 0.000360253" />
+                            <joint name="robotiq_2f_85_right_driver_joint" range="0 47.78" />
+                            <geom class="robotiq_viz" mesh="robotiq-2f-driver" />
+                            <geom pos="0 0.0315 -0.0041" class="robotiq_viz" mesh="robotiq-2f-coupler" />
+                            <geom pos="0 0.0315 -0.0041" type="mesh" mesh="robotiq-2f-coupler" contype="7" conaffinity="1"/>
+                            <body name="robotiq_2f_85_right_follower" pos="0 0.0376 0.043">
+                                <inertial pos="0 0 0.055" quat="0.707107 0.707107 0 0" mass="0.2" diaginertia="0.000380833 0.000380833 0.00036" />
+                                <joint name="robotiq_2f_85_right_follower_joint" range="-170 170" />
+                                <geom class="robotiq_viz" mesh="robotiq-2f-follower" />
+                                <geom type="mesh" mesh="robotiq-2f-pad" rgba="1 1 1 1"contype="7" conaffinity="1"/>
+                            </body>
+                        </body>
+                        <body name="robotiq_2f_85_right_spring_link" pos="0 0.012 0.0614">
+                            <inertial pos="0 0 0.055" quat="0.707107 0.707107 0 0" mass="0.1" diaginertia="0.000190833 0.000190833 0.00018" />
+                            <joint name="robotiq_2f_85_right_spring_link_joint" range="-170 170" />
+                            <geom class="robotiq_viz" mesh="robotiq-2f-spring_link" contype="8" conaffinity="0" />
+                            <site type="sphere" size="0.01" pos="0 0.037 0.043" rgba="1 0 0 1" group="3"/>
+                        </body>
+                        <body name="robotiq_2f_85_left_driver" pos="0 -0.0306011 0.054904" quat="0 0 0 1">
+                            <inertial pos="0 0.01575 0.05295" quat="0.738425 0.674335 0 0" mass="0.2" diaginertia="0.00043212 0.000431866 0.000360253" />
+                            <joint name="robotiq_2f_85_left_driver_joint" range="0 47.78" />
+                            <geom class="robotiq_viz" mesh="robotiq-2f-driver" />
+                            <geom pos="0 0.0315 -0.0041" class="robotiq_viz" mesh="robotiq-2f-coupler" />
+                            <geom pos="0 0.0315 -0.0041" type="mesh" mesh="robotiq-2f-coupler" contype="7" conaffinity="1"/>
+                            <body name="robotiq_2f_85_left_follower" pos="0 0.0376 0.043">
+                                <inertial pos="0 0 0.055" quat="0.707107 0.707107 0 0" mass="0.2" diaginertia="0.000380833 0.000380833 0.00036" />
+                                <joint name="robotiq_2f_85_left_follower_joint" range="-170 170" />
+                                <geom class="robotiq_viz" mesh="robotiq-2f-follower" />
+                                <geom type="mesh" mesh="robotiq-2f-pad" rgba="1 1 1 1" contype="7" conaffinity="1"/>
+                            </body>
+                        </body>
+                        <body name="robotiq_2f_85_left_spring_link" pos="0 -0.012 0.0614" quat="0 0 0 1">
+                            <inertial pos="0 0 0.055" quat="0.707107 0.707107 0 0" mass="0.1" diaginertia="0.000190833 0.000190833 0.00018" />
+                            <joint name="robotiq_2f_85_left_spring_link_joint" range="-170 170" />
+                            <geom class="robotiq_viz" mesh="robotiq-2f-spring_link" contype="8" conaffinity="0" />
+                            <site type="sphere" size="0.01" pos="0 0.037 0.043" rgba="1 0 0 1" group="3"/>
+                        </body>
+                    </body>
+                      <!-- <body name="right_driver" pos="0 -0.0306011 0.054904" quat="0.707107 0 -0.707107 0">
+                          <geom name="right_driver_mesh" type="mesh" mesh="robotiq_85_knuckle_link" material="GriMat" contype="7" conaffinity="1" />
+                          <joint name="joint7_1" axis="0 0 1" type="hinge" limited="true" range="0 0.872664626" />
+
+                      
+                          <body name="right_coupler" pos="0 -0.0315 0">
+                              <geom name="right_coupler_mesh" type="mesh" mesh="robotiq_85_finger_link" material="GriMat" contype="7" conaffinity="1" />
+                              <joint name="joint8_1" axis="0 0 1" type="hinge" limited="true" range="0 2.967059728" />
+
+                              <body name="right_follower_link" pos="0.0475 -0.006 0">
+                                  <geom name="right_follower_mesh" pos="0.0025 0.021 0" type="mesh" mesh="robotiq_85_finger_tip_link" material="GriMat" contype="7" conaffinity="1" />
+                                  <joint name="joint9_1" axis="0 0 1" type="hinge" limited="true" range="0 2.967059728" />
+                              </body>
+
+                          </body>
+
+                      </body>
+
+                      <body name="right_spring_link" pos="0.0016 -0.012 0.0614" quat="0.707107 0 -0.707107 0">
+                          <geom name="right_spring_mesh" type="mesh" pos="0 -0.0005 0.0016" mesh="robotiq_85_inner_knuckle_link" material="GriMat" contype="7" conaffinity="1" />
+                          <joint name="joint10_1" axis="0 0 1" type="hinge" limited="true" range="0 1" />
+                      </body>
+
+
+                      <body name="left_driver" pos="0 0.0306011 0.054904" quat="0 0.707107 0 0.707107">
+                          <geom name="left_driver_mesh" type="mesh" mesh="robotiq_85_knuckle_link" material="GriMat" contype="7" conaffinity="1" />
+                          <joint name="joint7_2" axis="0 0 1" type="hinge" limited="true" range="0 0.872664626" />
+
+                      
+                          <body name="left_coupler" pos="0 -0.0315 0">
+                              <geom name="left_coupler_mesh" type="mesh" mesh="robotiq_85_finger_link" material="GriMat" contype="7" conaffinity="1" />
+                              <joint name="joint8_2" axis="0 0 1" type="hinge" limited="true" range="0 2.967059728" />
+
+                              <body name="left_follower_link" pos="0.0475 -0.006 0">
+                                  <geom name="left_follower_mesh" pos="0.0025 0.021 0" type="mesh" mesh="robotiq_85_finger_tip_link" material="GriMat" contype="7" conaffinity="1"/>
+                                  <joint name="joint9_2" axis="0 0 1" type="hinge" limited="true" range="0 2.967059728" />
+                              </body>
+
+                          </body>
+
+                      </body>
+
+                      <body name="left_spring_link" pos="0.0016 0.012 0.0614" quat="0 0.707107 0 0.707107">
+                          <geom name="left_spring_mesh" type="mesh" pos="0 0.0005 0.0016" mesh="robotiq_85_inner_knuckle_link" material="GriMat" contype="7" conaffinity="1" />
+                          <joint name="joint10_2" axis="0 0 1" type="hinge" limited="true" range="0 1" />
+                      </body> -->
+
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+
+    <body childclass="wall" name="pick_box" pos="6 0.0 0.0" euler="0 0 0">
+        <geom size=".2 .28 .03" pos ="0 0 0.86" type="box" material="bench_mat"/>
+        <geom size=".03 .27 .45" pos ="0.23 0.0 0.45" type="box" material="bench_mat"/>
+        <geom size=".03 .27 .45" pos ="-0.23 0.0 0.45" type="box" material="bench_mat"/>
+        <geom size=".26 .03 .45" pos ="0.0 0.3 0.45" type="box" material="bench_mat"/>
+        <geom size=".26 .03 .45" pos ="0.0 -0.3 0.45" type="box" material="bench_mat"/>
+        <inertial pos="0 0 0" mass="1000" diaginertia="0 0 0" />
+    </body> 
+
+    <body childclass="wall" name="drop_box" pos="6 1 0.0">
+        <geom size=".2 .3 .03" pos ="0 0 0.615" type="box" material="bench_mat"/>
+        <geom size=".03 .3 .4" pos ="0.23 0.0 0.4" type="box" material="bench_mat"/>
+        <geom size=".03 .3 .4" pos ="-0.23 0.0 0.4" type="box" material="bench_mat"/>
+        <geom size=".26 .03 .4" pos ="0.0 0.33 0.4" type="box" material="bench_mat"/>
+        <geom size=".26 .03 .4" pos ="0.0 -0.33 0.4" type="box" material="bench_mat"/>
+        <inertial pos="0 0 0" mass="1000" diaginertia="0 0 0" />
+    </body>
+
+    <body childclass="wall" name="box_1" pos="6.0 0 0.95">
+        <joint armature="0" axis="1 0 0" damping="0" limited="true" name="box_1_x" pos="0 0 0" range="-5. 5." stiffness="0" type="slide"/>
+        <joint armature="0" axis="0 1 0" damping="0" limited="true" name="box_1_y" pos="0 0 0" range="-5. 5." stiffness="0" type="slide"/>
+        <joint armature="0" axis="0 0 1" damping="0" limited="true" name="box_1_z" pos="0 0 0" range="-2. 2." stiffness="0" type="slide"/>
+        <joint armature="0" damping="0" name="box_1_rot" pos="0 0 0" stiffness="0" type="ball"/>
+        <geom name="box_1" pos="0 0 0" material="tablecube" size="0.04 0.04 0.04" type="box"/>
+    </body>
+  </worldbody>
+
+  <equality>
+    <connect name = 'left-plantar-rod-eq' body1='left-plantar-rod'  body2='left-foot'        anchor='0.35012 0 0'/>
+    <connect name = 'left-achilles-rod-eq' body1='left-achilles-rod' body2='left-heel-spring' anchor='0.5012 0 0'/>
+    <connect name = 'right-plantar-rod-eq' body1='right-plantar-rod'  body2='right-foot'        anchor='0.35012 0 0'/>
+    <connect name = 'right-achilles-rod-eq' body1='right-achilles-rod' body2='right-heel-spring' anchor='0.5012 0 0'/>
+    <connect anchor="0 0.037 0.043" body1="robotiq_2f_85_right_spring_link" body2="robotiq_2f_85_right_follower" name="robotiq_2f_85_right"/>
+    <connect anchor="0 0.037 0.043" body1="robotiq_2f_85_left_spring_link" body2="robotiq_2f_85_left_follower" name="robotiq_2f_85_left"/>
+    <joint joint1="robotiq_2f_85_right_driver_joint" joint2="robotiq_2f_85_left_driver_joint"/>
+  </equality>
+
+  <actuator>
+    <!-- User parameter is the maximum no-load motor RPM -->
+    <motor name='left-hip-roll'  joint='left-hip-roll'  gear='25' ctrllimited='true' ctrlrange='-4.5 4.5'   user='2900'/>
+    <motor name='left-hip-yaw'   joint='left-hip-yaw'   gear='25' ctrllimited='true' ctrlrange='-4.5 4.5'   user='2900'/>
+    <motor name='left-hip-pitch' joint='left-hip-pitch' gear='16' ctrllimited='true' ctrlrange='-12.2 12.2' user='1300'/>
+    <motor name='left-knee'      joint='left-knee'      gear='16' ctrllimited='true' ctrlrange='-12.2 12.2' user='1300'/>
+    <motor name='left-foot'      joint='left-foot'      gear='50' ctrllimited='true' ctrlrange='-0.9 0.9'   user='5500'/>
+    <motor name='right-hip-roll'  joint='right-hip-roll'  gear='25' ctrllimited='true' ctrlrange='-4.5 4.5'   user='2900'/>
+    <motor name='right-hip-yaw'   joint='right-hip-yaw'   gear='25' ctrllimited='true' ctrlrange='-4.5 4.5'   user='2900'/>
+    <motor name='right-hip-pitch' joint='right-hip-pitch' gear='16' ctrllimited='true' ctrlrange='-12.2 12.2' user='1300'/>
+    <motor name='right-knee'      joint='right-knee'      gear='16' ctrllimited='true' ctrlrange='-12.2 12.2' user='1300'/>
+    <motor name='right-foot'      joint='right-foot'      gear='50' ctrllimited='true' ctrlrange='-0.9 0.9'   user='5500'/>
+    <motor name="shoulder-link" joint="joint-a1" gear="1 0 0 0 0 0" ctrlrange="-50 50" forcerange="-39 39"/>
+    <motor name="bicep-link" joint="joint-a2" gear="1 0 0 0 0 0" ctrlrange="-50 50" forcerange="-39 39"/>
+    <motor name="forearm-link" joint="joint-a3" gear="1 0 0 0 0 0" ctrlrange="-50 50" forcerange="-39 39"/>
+    <motor name="sphericalWrist1-link" joint="joint-a4" gear="1 0 0 0 0 0" ctrlrange="-50 50" forcerange="-9 9"/>
+    <motor name="sphericalWrist2-link" joint="joint-a5" gear="1 0 0 0 0 0" ctrlrange="-50 50" forcerange="-9 9"/>
+    <motor name="bracelet-link" joint="joint-a6" gear="1 0 0 0 0 0" ctrlrange="-50 50" forcerange="-9 9"/>
+    <position name="robotiq_2f_85" joint="robotiq_2f_85_right_driver_joint" ctrlrange="0 1" ctrllimited="true"/>
+  </actuator>
+
+  <sensor>
+    <!-- User parameter is the number of absolute encoder bits -->
+    <actuatorpos name='left-hip-roll-input'  actuator='left-hip-roll'  user='13'/>
+    <actuatorpos name='left-hip-yaw-input'   actuator='left-hip-yaw'   user='13'/>
+    <actuatorpos name='left-hip-pitch-input' actuator='left-hip-pitch' user='13'/>
+    <actuatorpos name='left-knee-input'      actuator='left-knee'      user='13'/>
+    <actuatorpos name='left-foot-input'      actuator='left-foot'      user='18'/>
+    <jointpos    name='left-shin-output'     joint='left-shin'         user='18' noise='2e-4'/>
+    <jointpos    name='left-tarsus-output'   joint='left-tarsus'       user='18' noise='2e-4'/>
+    <jointpos    name='left-foot-output'     joint='left-foot'         user='13'/>
+    <actuatorpos name='right-hip-roll-input'  actuator='right-hip-roll'   user='13'/>
+    <actuatorpos name='right-hip-yaw-input'   actuator='right-hip-yaw'    user='13'/>
+    <actuatorpos name='right-hip-pitch-input' actuator='right-hip-pitch'  user='13'/>
+    <actuatorpos name='right-knee-input'      actuator='right-knee'       user='13'/>
+    <actuatorpos name='right-foot-input'      actuator='right-foot'       user='18'/>
+    <jointpos    name='right-shin-output'     joint='right-shin'          user='18' noise='2e-4'/>
+    <jointpos    name='right-tarsus-output'   joint='right-tarsus'        user='18' noise='2e-4'/>
+    <jointpos    name='right-foot-output'     joint='right-foot'          user='13'/>
+    <!-- <actuatorpos name='shoulder-link-input'  actuator='shoulder-link'  user='13'/>
+    <actuatorpos name='bicep-link-input'  actuator='bicep-link'  user='13'/>
+    <actuatorpos name='forearm-link-input'  actuator='forearm-link'  user='13'/>
+    <actuatorpos name='sphericalWrist1-link-input'  actuator='sphericalWrist1-link'  user='13'/>
+    <actuatorpos name='sphericalWrist2-link-input'  actuator='sphericalWrist2-link'  user='13'/>
+    <actuatorpos name='bracelet-link-input'  actuator='bracelet-link'  user='13'/>
+    <jointpos name='shoulder-link-output'  joint='joint-a1'  user='13'/>
+    <jointpos name='bicep-link-output'  joint='joint-a2'  user='13'/>
+    <jointpos name='forearm-link-output'  joint='joint-a3'  user='13'/>
+    <jointpos name='sphericalWrist1-link-output'  joint='joint-a4'  user='13'/>
+    <jointpos name='sphericalWrist2-link-output'  joint='joint-a5'  user='13'/>
+    <jointpos name='bracelet-link-output'  joint='joint-a6'  user='13'/> -->
+
+    <!-- <jointpos name="robotiq_2f_85" joint="robotiq_2f_85_right_driver_joint"/> -->
+
+    <framequat     name='pelvis-orientation' objtype='site' objname='imu'/>
+    <gyro          name='pelvis-angular-velocity'    site='imu' noise='5e-4' cutoff='34.9'/>
+    <accelerometer name='pelvis-linear-acceleration' site='imu' noise='1e-2' cutoff='157'/>
+    <magnetometer  name='pelvis-magnetometer'        site='imu'/>
+
+    <force name='base-force' site='arm_base'/>
+    <torque name='base-torque' site='arm_base'/>
+    <!-- <framequat     name='endEffector-orientation' objtype='site' objname='imu_e'/>
+    <gyro          name='endEffector-angular-velocity'    site='imu_e' noise='5e-4' cutoff='34.9'/>
+    <accelerometer name='endEffector-linear-acceleration' site='imu_e' noise='1e-2' cutoff='157'/>
+    <magnetometer  name='endEffector-magnetometer'        site='imu_e'/> -->
+    <!-- <rangefinder   name='range1'                     site='range1' noise='1e-2' cutoff='1'/>
+    <rangefinder   name='range2'                     site='range2' noise='1e-2' cutoff='1'/>
+    <rangefinder   name='range3'                     site='range3' noise='1e-2' cutoff='1'/>
+    <rangefinder   name='range4'                     site='range4' noise='1e-2' cutoff='1'/>
+    <rangefinder   name='range5'                     site='range5' noise='1e-2' cutoff='1'/>
+    <rangefinder   name='range6'                     site='range6' noise='1e-2' cutoff='1'/> -->
+  </sensor>
+
+</mujoco>
