@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="cassie_w_gen3">
+  <xacro:include filename="../cassie-description/cassie.urdf"/>
+  <xacro:include filename="../kortex_description/arms/gen3/6dof/urdf/GEN3-6DOF_NO-VISION_URDF_ARM_V01.urdf"/>
+  
+  <joint name="joint_name" type="fixed">
+    <parent link="pelvis"/>
+    <child link="base_link"/>
+    <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+  </joint>
+
+</robot>

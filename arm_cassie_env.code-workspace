@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "arm_cassie_env"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"functional": "c",
+			"__functional_03": "c"
+		}
+	}
+}
